@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 class Chat extends React.Component{
 constructor(){
@@ -7,8 +7,6 @@ constructor(){
         messages: DUMMY_DATA
     }
 }
-
-
     render(){
         return(
             <div className='chat'>
@@ -21,6 +19,30 @@ constructor(){
         )
     }
 }
+
+componentDidMount(){
+    const chatManager = new ChatKit.ChatManager({
+        instancelocator:instancelocator,
+        userId:username,
+        tokenProvider: new Chatkit.TokenProvider({
+            url:testToken
+        })
+    })
+}
+
+chatManager.connect()
+    .then (currentUser =>{
+        currentUser.subscribeToRoom({
+            roomId:roomId,
+            hooks:{
+                oneNewMessage: message => {
+                    this.setState({
+                        messages:[...this.state.messages, message]
+                    })
+                }
+            }
+        })
+    })
 
 
 //dummy data to check the data flow
